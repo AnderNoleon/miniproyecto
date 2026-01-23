@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -92,7 +93,42 @@
                 </div>
                 <h3>Reservar Aula</h3>
                 <!-- Realiza nuevas reservas de aulas seleccionando fecha, horario y características requeridas. -->
-                
+                <form class="reservation-form">
+                    <div class="form-group">
+                        <label for="classroom">Selección de aula:</label>
+                        <select id="classroom" name="classroom" required>
+                            <option value="">Seleccione un aula</option>
+                            <option value="101">Aula 101 - Capacidad: 30 - Proyector, Pizarra</option>
+                            <option value="202">Aula 202 - Capacidad: 50 - Computadoras, Internet</option>
+                            <option value="303">Aula 303 - Capacidad: 20 - Pizarra, Aire Acondicionado</option>
+                            <option value="404">Aula 404 - Capacidad: 40 - Proyector, Sonido</option>
+                            <option value="505">Aula 505 - Capacidad: 35 - Pizarra Digital</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="date">Fecha:</label>
+                        <input type="date" id="date" name="date" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="time">Hora:</label>
+                        <select id="time" name="time" required>
+                            <option value="">Seleccione una hora</option>
+                            <option value="08:00">08:00 - 09:30</option>
+                            <option value="09:45">09:45 - 11:15</option>
+                            <option value="11:30">11:30 - 13:00</option>
+                            <option value="14:00">14:00 - 15:30</option>
+                            <option value="15:45">15:45 - 17:15</option>
+                            <option value="17:30">17:30 - 19:00</option>
+                            <option value="19:15">19:15 - 20:45</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit">Reservar Aula</button>
+                    </div>
+                </form>
             </div>
             
             <div class="feature-card">
