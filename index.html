@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Gestión de Aulas - Universidad</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 </head>
 <body>
-    <!-- Cabecera -->
     <header class="header">
         <div class="header-info">
             <div class="system-name">Sistema de Gestión de Aulas</div>
@@ -26,7 +23,6 @@
         </div>
     </header>
     
-    <!-- Navegación principal -->
     <nav class="navbar">
         <ul class="nav-list">
             <li class="nav-item active">
@@ -47,7 +43,6 @@
         </ul>
     </nav>
     
-    <!-- Contenido principal -->
     <main class="main-content">
         <h1 class="page-title">Panel de Control</h1>
         
@@ -62,7 +57,8 @@
                     <i class="fas fa-chalkboard"></i>
                 </div>
                 <h3>Aulas Disponibles</h3>
-                <p>Consulta la lista completa de aulas, sus características y disponibilidad en tiempo real.</p>
+                <!-- Consulta la lista completa de aulas, sus características y disponibilidad en tiempo real. -->
+
             </div>
             
             <div class="feature-card">
@@ -70,7 +66,8 @@
                     <i class="fas fa-calendar-plus"></i>
                 </div>
                 <h3>Reservar Aula</h3>
-                <p>Realiza nuevas reservas de aulas seleccionando fecha, horario y características requeridas.</p>
+                <!-- Realiza nuevas reservas de aulas seleccionando fecha, horario y características requeridas. -->
+                
             </div>
             
             <div class="feature-card">
@@ -78,7 +75,8 @@
                     <i class="fas fa-list-alt"></i>
                 </div>
                 <h3>Mis Reservas</h3>
-                <p>Gestiona todas tus reservas activas, consulta detalles o cancela reservas existentes.</p>
+                <!-- Gestiona todas tus reservas activas, consulta detalles o cancela reservas existentes. -->
+                
             </div>
             
             <div class="feature-card">
@@ -86,50 +84,15 @@
                     <i class="fas fa-cog"></i>
                 </div>
                 <h3>Administración</h3>
-                <p>Accede a funciones administrativas para gestionar usuarios, aulas y configuraciones del sistema.</p>
+                <!-- Accede a funciones administrativas para gestionar usuarios, aulas y configuraciones del sistema. -->
+
             </div>
         </div>
     </main>
     
-    <!-- Pie de página -->
     <footer class="footer">
         <p>Sistema de Gestión de Aulas &copy; 2023 - Universidad Tecnológica Nacional</p>
         <p>Todos los derechos reservados</p>
     </footer>
-    
-    <script>
-        // Script para cambiar la navegación activa
-        document.addEventListener('DOMContentLoaded', function() {
-            const navItems = document.querySelectorAll('.nav-item');
-            
-            navItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    // Remover clase active de todos los elementos
-                    navItems.forEach(nav => nav.classList.remove('active'));
-                    
-                    // Agregar clase active al elemento clickeado
-                    this.classList.add('active');
-                });
-            });
-            
-            // Simular información del usuario actualizada
-            const users = [
-                {name: "Dra. María Rodríguez", role: "Profesora - Departamento de Ingeniería"},
-                {name: "Dr. Carlos Méndez", role: "Decano - Facultad de Ciencias"},
-                {name: "Lic. Ana Fernández", role: "Administrativa - Secretaría Académica"},
-                {name: "Ing. Pablo Gómez", role: "Jefe de Departamento - Sistemas"}
-            ];
-            
-            // Cambiar usuario cada 8 segundos (solo para demostración)
-            let userIndex = 0;
-            setInterval(() => {
-                const userInfo = document.querySelector('.user-details');
-                userInfo.querySelector('.user-name').textContent = users[userIndex].name;
-                userInfo.querySelector('.user-role').textContent = users[userIndex].role;
-                
-                userIndex = (userIndex + 1) % users.length;
-            }, 8000);
-        });
-    </script>
 </body>
 </html>
