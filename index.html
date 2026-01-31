@@ -1,14 +1,474 @@
-
+<!--JAVIER MENDOZA-->
+<!--DENNIS CARRETO-->
+<!--ANDERSON HERNANDEZ-->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Gestión de Aulas - Universidad</title>
-    <!-- INTEGRANTES DEL GRUPO -->
-     <!-- ANDERSON HERNANDEZ -->
-      <!-- DENNYS CARRETO -->
-       <!-- JAVIER ELIZONDO -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables de color y tipografía */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        /* Estilos generales */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f7fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), #1a2530);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .system-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .university-name {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .user-info:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .user-icon {
+            font-size: 2.5rem;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .user-role {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Navegación */
+        .navbar {
+            background-color: white;
+            box-shadow: var(--shadow);
+            padding: 0 30px;
+        }
+
+        .nav-list {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-item {
+            padding: 18px 25px;
+            border-bottom: 3px solid transparent;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background-color: #f8f9fa;
+            color: var(--secondary-color);
+        }
+
+        .nav-item.active {
+            border-bottom-color: var(--secondary-color);
+            color: var(--secondary-color);
+            background-color: #f0f8ff;
+        }
+
+        .nav-item i {
+            margin-right: 8px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Contenido principal */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .page-title {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-size: 2.2rem;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        /* Sección de bienvenida */
+        .welcome-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .welcome-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+
+        .welcome-section p {
+            color: #555;
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+
+        /* Tarjetas de características */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .feature-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            transition: var(--transition);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            background-color: #e8f4fc;
+            color: var(--secondary-color);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        /* Tabla de aulas */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th {
+            background-color: #f2f6fa;
+            color: var(--primary-color);
+            font-weight: 600;
+            text-align: left;
+            padding: 12px 15px;
+            border-bottom: 2px solid #e1e5eb;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        /* Formulario de reserva */
+        .reservation-form {
+            margin-top: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .form-group select, 
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-group select:focus, 
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .form-group button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .form-group button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Indicadores de disponibilidad */
+        td:last-child {
+            font-weight: 600;
+        }
+
+        td:last-child:contains("Disponible") {
+            color: var(--success-color);
+        }
+
+        td:last-child:contains("Ocupada") {
+            color: var(--accent-color);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 25px;
+            margin-top: 40px;
+        }
+
+        .footer p {
+            margin: 5px 0;
+            opacity: 0.9;
+        }
+
+        /* Responsive */
+        @media (max-width: 1100px) {
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px 20px;
+            }
+            
+            .user-info {
+                margin-top: 15px;
+                width: 100%;
+                justify-content: flex-start;
+            }
+            
+            .nav-list {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .nav-item {
+                padding: 12px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .page-title {
+                font-size: 1.8rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .feature-card {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .system-name {
+                font-size: 1.2rem;
+            }
+            
+            .university-name {
+                font-size: 0.9rem;
+            }
+            
+            .user-name {
+                font-size: 1rem;
+            }
+            
+            .user-role {
+                font-size: 0.8rem;
+            }
+            
+            .nav-list {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-item {
+                width: 100%;
+                text-align: center;
+                padding: 15px;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .welcome-section h2 {
+                font-size: 1.5rem;
+            }
+            
+            table {
+                font-size: 0.9rem;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+            }
+        }
+
+        /* Efectos especiales */
+        .feature-card:nth-child(2) .feature-icon {
+            background-color: #e8f7ef;
+            color: var(--success-color);
+        }
+
+        .feature-card:nth-child(3) .feature-icon {
+            background-color: #fef9e7;
+            color: var(--warning-color);
+        }
+
+        .feature-card:nth-child(4) .feature-icon {
+            background-color: #f4ecf7;
+            color: #9b59b6;
+        }
+
+        /* Estilo para las secciones incompletas */
+        .feature-card:has(table) {
+            min-height: 400px;
+        }
+
+        .feature-card:has(.reservation-form) {
+            min-height: 400px;
+        }
+
+        .feature-card:nth-child(3), 
+        .feature-card:nth-child(4) {
+            position: relative;
+        }
+
+        .feature-card:nth-child(3)::after,
+        .feature-card:nth-child(4)::after {
+            content: "Función en desarrollo";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 15px 25px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            color: var(--primary-color);
+            box-shadow: var(--shadow);
+            text-align: center;
+            width: 80%;
+        }
+    </style>
 </head>
 <body>
     <header class="header">
@@ -31,7 +491,7 @@
     <nav class="navbar">
         <ul class="nav-list">
             <li class="nav-item active">
-                <a href="#"><i class="fas fa-home"></i> Inici o</a>
+                <a href="#"><i class="fas fa-home"></i> Inicio</a>
             </li>
             <li class="nav-item">
                 <a href="#"><i class="fas fa-chalkboard"></i> Aulas</a>
@@ -88,7 +548,7 @@
                         <td>Pizarra, Aire Acondicionado</td>
                         <td>Disponible</td>
                     </tr>
-                                        <tr>
+                    <tr>
                         <td>Aula 404</td>
                         <td>40</td>
                         <td>Proyector, Sonido</td>
@@ -148,38 +608,12 @@
             </div>
             
             <div class="feature-card">
-                <div class="feature-card">
                 <div class="feature-icon">
-                    <i class="fas fa-chalkboard"></i>
+                    <i class="fas fa-list-alt"></i>
                 </div>
                 <h3>Mis Reservas</h3>
-                 <table>
-                    <tr>
-                        <th>Aula</th>
-                        <th>Capacidad</th>
-                        <th>Recursos</th>
-                        <th>Disponibilidad</th>
-                    </tr>
-                    <tr>
-                        <td>Aula 101</td>
-                        <td>30</td>
-                        <td>Proyector, Pizarra</td>
-                        <td>Ocupado</td>
-                    </tr>
-                    <tr>
-                        <td>Aula 202</td>
-                        <td>50</td>
-                        <td>Computadoras, Internet</td>
-                        <td>Ocupada</td>
-                    </tr>
-                    <tr>
-                        <td>Aula 303</td>
-                        <td>20</td>
-                        <td>Pizarra, Aire Acondicionado</td>
-                        <td>Ocupado</td>
-                    </tr>
-                </table>
-            </div>
+                <!-- Gestiona todas tus reservas activas, consulta detalles o cancela reservas existentes. -->
+                
             </div>
             
             <div class="feature-card">
@@ -187,7 +621,7 @@
                     <i class="fas fa-cog"></i>
                 </div>
                 <h3>Administración</h3>
-                <!-- Accede a funciones administrativas para gestionar usuarios, aulas y configuraciones del sistema. -->
+                <!-- Accede a funciones  para gestionar usuarios, aulas y configuraciones del sistema. -->
 
             </div>
         </div>
