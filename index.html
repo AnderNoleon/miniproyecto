@@ -8,467 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Gestión de Aulas - Universidad</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* Variables de color y tipografía */
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --light-color: #ecf0f1;
-            --dark-color: #2c3e50;
-            --success-color: #27ae60;
-            --warning-color: #f39c12;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --border-radius: 8px;
-            --transition: all 0.3s ease;
-        }
-
-        /* Estilos generales */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f5f7fa;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, var(--primary-color), #1a2530);
-            color: white;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .system-name {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        .university-name {
-            font-size: 1rem;
-            opacity: 0.9;
-            margin-top: 5px;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 10px 20px;
-            border-radius: var(--border-radius);
-            transition: var(--transition);
-        }
-
-        .user-info:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-        }
-
-        .user-icon {
-            font-size: 2.5rem;
-        }
-
-        .user-details {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .user-name {
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        .user-role {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-
-        /* Navegación */
-        .navbar {
-            background-color: white;
-            box-shadow: var(--shadow);
-            padding: 0 30px;
-        }
-
-        .nav-list {
-            display: flex;
-            list-style: none;
-        }
-
-        .nav-item {
-            padding: 18px 25px;
-            border-bottom: 3px solid transparent;
-            transition: var(--transition);
-            font-weight: 500;
-        }
-
-        .nav-item:hover {
-            background-color: #f8f9fa;
-            color: var(--secondary-color);
-        }
-
-        .nav-item.active {
-            border-bottom-color: var(--secondary-color);
-            color: var(--secondary-color);
-            background-color: #f0f8ff;
-        }
-
-        .nav-item i {
-            margin-right: 8px;
-            width: 20px;
-            text-align: center;
-        }
-
-        /* Contenido principal */
-        .main-content {
-            flex: 1;
-            padding: 30px;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .page-title {
-            color: var(--primary-color);
-            margin-bottom: 25px;
-            font-size: 2.2rem;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-        }
-
-        /* Sección de bienvenida */
-        .welcome-section {
-            background-color: white;
-            padding: 25px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            margin-bottom: 30px;
-        }
-
-        .welcome-section h2 {
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            font-size: 1.8rem;
-        }
-
-        .welcome-section p {
-            color: #555;
-            line-height: 1.7;
-            font-size: 1.05rem;
-        }
-
-        /* Tarjetas de características */
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-            gap: 30px;
-            margin-top: 20px;
-        }
-
-        .feature-card {
-            background-color: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            padding: 25px;
-            transition: var(--transition);
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .feature-icon {
-            background-color: #e8f4fc;
-            color: var(--secondary-color);
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-        }
-
-        .feature-card h3 {
-            color: var(--primary-color);
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-        }
-
-        /* Tabla de aulas */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        th {
-            background-color: #f2f6fa;
-            color: var(--primary-color);
-            font-weight: 600;
-            text-align: left;
-            padding: 12px 15px;
-            border-bottom: 2px solid #e1e5eb;
-        }
-
-        td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #eee;
-        }
-
-        tr:hover {
-            background-color: #f9f9f9;
-        }
-
-        /* Formulario de reserva */
-        .reservation-form {
-            margin-top: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-
-        .form-group select, 
-        .form-group input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-
-        .form-group select:focus, 
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-        }
-
-        .form-group button {
-            background-color: var(--secondary-color);
-            color: white;
-            border: none;
-            padding: 14px 25px;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        .form-group button:hover {
-            background-color: #2980b9;
-        }
-
-        /* Indicadores de disponibilidad */
-        td:last-child {
-            font-weight: 600;
-        }
-
-        td:last-child:contains("Disponible") {
-            color: var(--success-color);
-        }
-
-        td:last-child:contains("Ocupada") {
-            color: var(--accent-color);
-        }
-
-        /* Footer */
-        .footer {
-            background-color: var(--primary-color);
-            color: white;
-            text-align: center;
-            padding: 25px;
-            margin-top: 40px;
-        }
-
-        .footer p {
-            margin: 5px 0;
-            opacity: 0.9;
-        }
-
-        /* Responsive */
-        @media (max-width: 1100px) {
-            .features {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 15px 20px;
-            }
-            
-            .user-info {
-                margin-top: 15px;
-                width: 100%;
-                justify-content: flex-start;
-            }
-            
-            .nav-list {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .nav-item {
-                padding: 12px 15px;
-                font-size: 0.9rem;
-            }
-            
-            .main-content {
-                padding: 20px;
-            }
-            
-            .page-title {
-                font-size: 1.8rem;
-            }
-            
-            .features {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .feature-card {
-                padding: 20px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .system-name {
-                font-size: 1.2rem;
-            }
-            
-            .university-name {
-                font-size: 0.9rem;
-            }
-            
-            .user-name {
-                font-size: 1rem;
-            }
-            
-            .user-role {
-                font-size: 0.8rem;
-            }
-            
-            .nav-list {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .nav-item {
-                width: 100%;
-                text-align: center;
-                padding: 15px;
-            }
-            
-            .page-title {
-                font-size: 1.5rem;
-            }
-            
-            .welcome-section h2 {
-                font-size: 1.5rem;
-            }
-            
-            table {
-                font-size: 0.9rem;
-            }
-            
-            th, td {
-                padding: 8px 10px;
-            }
-        }
-
-        /* Efectos especiales */
-        .feature-card:nth-child(2) .feature-icon {
-            background-color: #e8f7ef;
-            color: var(--success-color);
-        }
-
-        .feature-card:nth-child(3) .feature-icon {
-            background-color: #fef9e7;
-            color: var(--warning-color);
-        }
-
-        .feature-card:nth-child(4) .feature-icon {
-            background-color: #f4ecf7;
-            color: #9b59b6;
-        }
-
-        /* Estilo para las secciones incompletas */
-        .feature-card:has(table) {
-            min-height: 400px;
-        }
-
-        .feature-card:has(.reservation-form) {
-            min-height: 400px;
-        }
-
-        .feature-card:nth-child(3), 
-        .feature-card:nth-child(4) {
-            position: relative;
-        }
-
-        .feature-card:nth-child(3)::after,
-        .feature-card:nth-child(4)::after {
-            content: "Función en desarrollo";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 15px 25px;
-            border-radius: var(--border-radius);
-            font-weight: 600;
-            color: var(--primary-color);
-            box-shadow: var(--shadow);
-            text-align: center;
-            width: 80%;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header class="header">
@@ -490,95 +30,132 @@
     
     <nav class="navbar">
         <ul class="nav-list">
-            <li class="nav-item active">
+            <li class="nav-item active" data-section="inicio">
                 <a href="#"><i class="fas fa-home"></i> Inicio</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" data-section="aulas">
                 <a href="#"><i class="fas fa-chalkboard"></i> Aulas</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" data-section="reservar">
                 <a href="#"><i class="fas fa-calendar-plus"></i> Reservar Aula</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" data-section="mis-reservas">
                 <a href="#"><i class="fas fa-list-alt"></i> Mis Reservas</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" data-section="administracion">
                 <a href="#"><i class="fas fa-cog"></i> Administración</a>
             </li>
         </ul>
     </nav>
     
     <main class="main-content">
-        <h1 class="page-title">Panel de Control</h1>
-        
-        <section class="welcome-section">
-            <h2>Bienvenida al Sistema de Gestión de Aulas</h2>
-            <p>Este sistema permite a los profesores y personal administrativo gestionar las reservas de aulas de la universidad de manera eficiente. Desde aquí puedes consultar la disponibilidad de aulas, realizar nuevas reservas, gestionar tus reservas existentes y acceder a funciones administrativas si tienes los permisos correspondientes.</p>
-        </section>
-        
-        <div class="features">
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-chalkboard"></i>
+        <!-- SECCIÓN: INICIO -->
+        <section id="inicio-section" class="content-section active">
+            <h1 class="page-title">Panel de Control</h1>
+            
+            <div class="welcome-section">
+                <h2>Bienvenida al Sistema de Gestión de Aulas</h2>
+                <p>Este sistema permite a los profesores y personal administrativo gestionar las reservas de aulas de la universidad de manera eficiente. Desde aquí puedes consultar la disponibilidad de aulas, realizar nuevas reservas, gestionar tus reservas existentes y acceder a funciones administrativas si tienes los permisos correspondientes.</p>
+            </div>
+            
+            <div class="features">
+                <div class="feature-card" data-navigate="aulas">
+                    <div class="feature-icon">
+                        <i class="fas fa-chalkboard"></i>
+                    </div>
+                    <h3>Aulas Disponibles</h3>
+                    <p>Consulta la lista completa de aulas y su disponibilidad</p>
+                    <button class="card-button">Ver Aulas</button>
                 </div>
-                <h3>Aulas Disponibles</h3>
-                <!-- Consulta la lista completa de aulas, sus características y disponibilidad en tiempo real. -->
-                <table>
-                    <tr>
-                        <th>Aula</th>
-                        <th>Capacidad</th>
-                        <th>Recursos</th>
-                        <th>Disponibilidad</th>
-                    </tr>
-                    <tr>
-                        <td>Aula 101</td>
-                        <td>30</td>
-                        <td>Proyector, Pizarra</td>
-                        <td>Disponible</td>
-                    </tr>
-                    <tr>
-                        <td>Aula 202</td>
-                        <td>50</td>
-                        <td>Computadoras, Internet</td>
-                        <td>Ocupada</td>
-                    </tr>
-                    <tr>
-                        <td>Aula 303</td>
-                        <td>20</td>
-                        <td>Pizarra, Aire Acondicionado</td>
-                        <td>Disponible</td>
-                    </tr>
-                    <tr>
-                        <td>Aula 404</td>
-                        <td>40</td>
-                        <td>Proyector, Sonido</td>
-                        <td>Disponible</td>
-                    </tr>
-                    <tr>
-                        <td>Aula 505</td>
-                        <td>35</td>
-                        <td>Pizarra Digital</td>
-                        <td>Disponible</td>
-                    </tr>
-                </table>
+                
+                <div class="feature-card" data-navigate="reservar">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-plus"></i>
+                    </div>
+                    <h3>Reservar Aula</h3>
+                    <p>Realiza nuevas reservas de aulas</p>
+                    <button class="card-button">Hacer Reserva</button>
+                </div>
+                
+                <div class="feature-card" data-navigate="mis-reservas">
+                    <div class="feature-icon">
+                        <i class="fas fa-list-alt"></i>
+                    </div>
+                    <h3>Mis Reservas</h3>
+                    <p>Gestiona tus reservas activas</p>
+                    <button class="card-button">Ver Reservas</button>
+                </div>
+                
+                <div class="feature-card" data-navigate="administracion">
+                    <div class="feature-icon">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <h3>Administración</h3>
+                    <p>Gestiona usuarios y configuraciones</p>
+                    <button class="card-button">Administrar</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: AULAS -->
+        <section id="aulas-section" class="content-section">
+            <h1 class="page-title">Aulas Disponibles</h1>
+            
+            <div class="filters-section">
+                <div class="filter-group">
+                    <label for="filter-capacity">Capacidad mínima:</label>
+                    <select id="filter-capacity">
+                        <option value="0">Todas</option>
+                        <option value="20">20+ personas</option>
+                        <option value="30">30+ personas</option>
+                        <option value="40">40+ personas</option>
+                        <option value="50">50+ personas</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filter-status">Estado:</label>
+                    <select id="filter-status">
+                        <option value="all">Todas</option>
+                        <option value="disponible">Disponibles</option>
+                        <option value="ocupada">Ocupadas</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <input type="text" id="search-classroom" placeholder="Buscar aula...">
+                </div>
             </div>
             
             <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-calendar-plus"></i>
-                </div>
-                <h3>Reservar Aula</h3>
-                <!-- Realiza nuevas reservas de aulas seleccionando fecha, horario y características requeridas. -->
-                <form class="reservation-form">
+                <table id="classrooms-table">
+                    <thead>
+                        <tr>
+                            <th>Aula</th>
+                            <th>Capacidad</th>
+                            <th>Recursos</th>
+                            <th>Disponibilidad</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="classrooms-tbody">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: RESERVAR -->
+        <section id="reservar-section" class="content-section">
+            <h1 class="page-title">Reservar Aula</h1>
+            
+            <div class="feature-card">
+                <form id="reservation-form" class="reservation-form">
                     <div class="form-group">
                         <label for="classroom">Selección de aula:</label>
                         <select id="classroom" name="classroom" required>
                             <option value="">Seleccione un aula</option>
-                            <option value="101">Aula 101 - Capacidad: 30 - Proyector, Pizarra</option>
-                            <option value="202">Aula 202 - Capacidad: 50 - Computadoras, Internet</option>
-                            <option value="303">Aula 303 - Capacidad: 20 - Pizarra, Aire Acondicionado</option>
-                            <option value="404">Aula 404 - Capacidad: 40 - Proyector, Sonido</option>
-                            <option value="505">Aula 505 - Capacidad: 35 - Pizarra Digital</option>
+                            
                         </select>
                     </div>
                     
@@ -602,34 +179,106 @@
                     </div>
                     
                     <div class="form-group">
+                        <label for="purpose">Propósito de la reserva:</label>
+                        <input type="text" id="purpose" name="purpose" placeholder="Ej: Clase de Matemáticas" required>
+                    </div>
+                    
+                    <div class="form-group">
                         <button type="submit">Reservar Aula</button>
                     </div>
                 </form>
             </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-list-alt"></i>
-                </div>
-                <h3>Mis Reservas</h3>
-                <!-- Gestiona todas tus reservas activas, consulta detalles o cancela reservas existentes. -->
-                
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-cog"></i>
-                </div>
-                <h3>Administración</h3>
-                <!-- Accede a funciones  para gestionar usuarios, aulas y configuraciones del sistema. -->
+        </section>
 
+        <!-- SECCIÓN: MIS RESERVAS -->
+        <section id="mis-reservas-section" class="content-section">
+            <h1 class="page-title">Mis Reservas</h1>
+            
+            <div class="feature-card">
+                <div id="reservations-list">
+                    
+                </div>
             </div>
-        </div>
+        </section>
+
+        <!-- SECCIÓN: ADMINISTRACIÓN -->
+        <section id="administracion-section" class="content-section">
+            <h1 class="page-title">Panel de Administración</h1>
+            
+            <div class="admin-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <h3>Agregar Nueva Aula</h3>
+                    
+                    <form id="add-classroom-form" class="reservation-form">
+                        <div class="form-group">
+                            <label for="new-classroom-name">Nombre del aula:</label>
+                            <input type="text" id="new-classroom-name" placeholder="Ej: Aula 606" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="new-classroom-capacity">Capacidad:</label>
+                            <input type="number" id="new-classroom-capacity" min="1" placeholder="30" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="new-classroom-resources">Recursos (separados por coma):</label>
+                            <input type="text" id="new-classroom-resources" placeholder="Proyector, Pizarra" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit">Agregar Aula</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>Estadísticas del Sistema</h3>
+                    
+                    <div class="stats-container">
+                        <div class="stat-item">
+                            <div class="stat-label">Total de Aulas</div>
+                            <div class="stat-value" id="stat-total-classrooms">0</div>
+                        </div>
+                        
+                        <div class="stat-item">
+                            <div class="stat-label">Aulas Disponibles</div>
+                            <div class="stat-value" id="stat-available-classrooms">0</div>
+                        </div>
+                        
+                        <div class="stat-item">
+                            <div class="stat-label">Reservas Activas</div>
+                            <div class="stat-value" id="stat-active-reservations">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
+    
+    <!-- Modal de confirmación -->
+    <div id="confirmation-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 id="modal-title">Operación Exitosa</h2>
+            <p id="modal-message">La operación se ha completado correctamente.</p>
+            <button id="modal-close-btn" class="modal-button">Aceptar</button>
+        </div>
+    </div>
     
     <footer class="footer">
         <p>Sistema de Gestión de Aulas &copy; 2023 - Universidad Tecnológica Nacional</p>
         <p>Todos los derechos reservados</p>
     </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
