@@ -1,478 +1,320 @@
-// ============================================
-// JAVIER MENDOZA - DENNYS CARRETO - ANDERSON HERNANDEZ
-// Sistema de Gestión de Aulas - JavaScript
-// ============================================
+// Configuración
+const API_BASE_URL = 'http://localhost:5000/api'; // Cambia esto según tu backend
 
+// Estado de la aplicación
+let anomaliesData = [];
+let activityChart = null;
 
-const appState = {
-    currentSection: 'inicio',
-    classrooms: [
-        { id: 101, name: 'Aula 101', capacity: 30, resources: 'Proyector, Pizarra', status: 'disponible' },
-        { id: 202, name: 'Aula 202', capacity: 50, resources: 'Computadoras, Internet', status: 'ocupada' },
-        { id: 303, name: 'Aula 303', capacity: 20, resources: 'Pizarra, Aire Acondicionado', status: 'disponible' },
-        { id: 404, name: 'Aula 404', capacity: 40, resources: 'Proyector, Sonido', status: 'disponible' },
-        { id: 505, name: 'Aula 505', capacity: 35, resources: 'Pizarra Digital', status: 'disponible' }
-    ],
-    reservations: [],
-    filters: {
-        capacity: 0,
-        status: 'all',
-        searchTerm: ''
-    }
-};
-
-
-// Selección de elementos usando diferentes métodos
-const navItems = document.querySelectorAll('.nav-item'); // querySelectorAll
-const sections = document.querySelectorAll('.content-section'); // querySelectorAll
-const modal = document.getElementById('confirmation-modal'); // getElementById
-const modalTitle = document.querySelector('#modal-title'); // querySelector
-const modalMessage = document.querySelector('#modal-message'); // querySelector
-const closeModalBtn = document.querySelector('.close-modal'); // querySelector
-const modalCloseBtn = document.getElementById('modal-close-btn'); // getElementById
-
-
+// Inicialización cuando carga la página
 document.addEventListener('DOMContentLoaded', () => {
-    initializeApp();
+    initializeDateTime();
+    loadAnomalies();
+    setupEventListeners();
+    startAutoRefresh();
 });
 
-
-function initializeApp() {
-    
-    renderClassroomsTable();
-    
-    
-    populateClassroomSelect();
-    
-    
-    setMinDate();
-    
-    
-    renderReservations();
-    
-    
-    updateStats();
-    
-    
-    setupNavigation();
-    
-    
-    setupFilters();
-    
-    
-    setupReservationForm();
-    
-    
-    setupAddClassroomForm();
-    
-    
-    setupCardNavigation();
-    
-    
-    setupModal();
+// Configurar event listeners
+function setupEventListeners() {
+    document.getElementById('refreshBtn').addEventListener('click', loadAnomalies);
+    document.getElementById('filterType').addEventListener('change', filterAndDisplayData);
+    document.getElementById('searchInput').addEventListener('input', filterAndDisplayData);
 }
 
-
-function setupNavigation() {
-    navItems.forEach(item => {
-        item.addEventListener('click', (e) => {
-            e.preventDefault();
-            
-            const targetSection = item.getAttribute('data-section');
-            navigateToSection(targetSection);
-        });
-    });
+// Inicializar fecha y hora
+function initializeDateTime() {
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
 }
 
-function navigateToSection(sectionName) {
-    
-    appState.currentSection = sectionName;
-    navItems.forEach(item => {
-        item.classList.remove('active');
-    });
-    
-    
-    const activeNavItem = document.querySelector(`[data-section="${sectionName}"]`);
-    if (activeNavItem) {
-        activeNavItem.classList.add('active');
-    }
-    
-    
-    sections.forEach(section => {
-        section.classList.remove('active');
-    });
-    
-    
-    const targetSection = document.getElementById(`${sectionName}-section`);
-    if (targetSection) {
-        targetSection.classList.add('active');
-    }
+function updateDateTime() {
+    const now = new Date();
+    const options = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    };
+    document.getElementById('currentDateTime').textContent = 
+        now.toLocaleDateString('es-ES', options);
 }
 
-
-function setupCardNavigation() {
-    const featureCards = document.querySelectorAll('.feature-card[data-navigate]');
-    
-    featureCards.forEach(card => {
-        card.addEventListener('click', () => {
-            const targetSection = card.getAttribute('data-navigate');
-            navigateToSection(targetSection);
-        });
-    });
+// Iniciar auto-refresh cada 30 segundos
+function startAutoRefresh() {
+    setInterval(loadAnomalies, 30000);
 }
 
-
-function renderClassroomsTable() {
-    const tbody = document.getElementById('classrooms-tbody');
+// Cargar anomalías desde la API
+async function loadAnomalies() {
+    const tableBody = document.getElementById('tableBody');
     
-    
-    let filteredClassrooms = appState.classrooms.filter(classroom => {
-        const matchesCapacity = classroom.capacity >= appState.filters.capacity;
-        const matchesStatus = appState.filters.status === 'all' || 
-                              classroom.status === appState.filters.status;
-        const matchesSearch = classroom.name.toLowerCase()
-                              .includes(appState.filters.searchTerm.toLowerCase());
+    try {
+        const response = await fetch(`${API_BASE_URL}/recent-anomalies`);
         
-        return matchesCapacity && matchesStatus && matchesSearch;
-    });
-    
-    
-    tbody.innerHTML = '';
-    
-    
-    filteredClassrooms.forEach(classroom => {
-        const row = document.createElement('tr');
-        
-        const statusClass = classroom.status === 'disponible' ? 
-                            'status-disponible' : 'status-ocupada';
-        const statusText = classroom.status === 'disponible' ? 
-                          'Disponible' : 'Ocupada';
-        const buttonDisabled = classroom.status === 'ocupada' ? 'disabled' : '';
-        
-        row.innerHTML = `
-            <td>${classroom.name}</td>
-            <td>${classroom.capacity}</td>
-            <td>${classroom.resources}</td>
-            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-            <td>
-                <button class="action-button" 
-                        onclick="quickReserve(${classroom.id})" 
-                        ${buttonDisabled}>
-                    Reservar
-                </button>
-            </td>
-        `;
-        
-        tbody.appendChild(row);
-    });
-    
-    
-    if (filteredClassrooms.length === 0) {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td colspan="5" style="text-align: center; padding: 30px; color: #999;">
-                No se encontraron aulas que coincidan con los filtros
-            </td>
-        `;
-        tbody.appendChild(row);
-    }
-}
-
-
-function setupFilters() {
-    
-    const capacityFilter = document.getElementById('filter-capacity');
-    capacityFilter.addEventListener('change', (e) => {
-        appState.filters.capacity = parseInt(e.target.value);
-        renderClassroomsTable();
-    });
-    
-    
-    const statusFilter = document.getElementById('filter-status');
-    statusFilter.addEventListener('change', (e) => {
-        appState.filters.status = e.target.value;
-        renderClassroomsTable();
-    });
-    
-    
-    const searchInput = document.getElementById('search-classroom');
-    searchInput.addEventListener('input', (e) => {
-        appState.filters.searchTerm = e.target.value;
-        renderClassroomsTable();
-    });
-}
-
-
-function populateClassroomSelect() {
-    const select = document.getElementById('classroom');
-    
-    
-    select.innerHTML = '<option value="">Seleccione un aula</option>';
-    
-    
-    appState.classrooms
-        .filter(classroom => classroom.status === 'disponible')
-        .forEach(classroom => {
-            const option = document.createElement('option');
-            option.value = classroom.id;
-            option.textContent = `${classroom.name} - Capacidad: ${classroom.capacity} - ${classroom.resources}`;
-            select.appendChild(option);
-        });
-}
-
-function setMinDate() {
-    const dateInput = document.getElementById('date');
-    const today = new Date().toISOString().split('T')[0];
-    dateInput.setAttribute('min', today);
-}
-
-function setupReservationForm() {
-    const form = document.getElementById('reservation-form');
-    
-    form.addEventListener('submit', (e) => {
-        e.preventDefault(); 
-        
-        
-        const classroomId = parseInt(document.getElementById('classroom').value);
-        const date = document.getElementById('date').value;
-        const time = document.getElementById('time').value;
-        const purpose = document.getElementById('purpose').value;
-        
-        
-        if (!classroomId || !date || !time || !purpose) {
-            showModal('Error', 'Por favor complete todos los campos', 'error');
-            return;
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
         }
         
+        anomaliesData = await response.json();
+        filterAndDisplayData();
+        updateKPIs();
+        updateChart();
         
-        const classroom = appState.classrooms.find(c => c.id === classroomId);
-        
-        
-        const reservation = {
-            id: Date.now(),
-            classroom: classroom.name,
-            classroomId: classroomId,
-            date: date,
-            time: time,
-            purpose: purpose,
-            status: 'activa'
-        };
-        
-        
-        appState.reservations.push(reservation);
-        
-        
-        classroom.status = 'ocupada';
-        
-        
-        renderClassroomsTable();
-        populateClassroomSelect();
-        renderReservations();
-        updateStats();
-        
-        
-        form.reset();
-        
-        
-        showModal(
-            'Reserva Exitosa', 
-            `Se ha reservado ${classroom.name} para el ${formatDate(date)} a las ${time}`
+    } catch (error) {
+        console.error('Error cargando anomalías:', error);
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="7" style="color: var(--danger-color); text-align: center;">
+                    <i class="fas fa-exclamation-circle"></i> 
+                    Error al cargar datos: ${error.message}
+                </td>
+            </tr>
+        `;
+    }
+}
+
+// Filtrar y mostrar datos según filtros actuales
+function filterAndDisplayData() {
+    const filterType = document.getElementById('filterType').value;
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    
+    let filteredData = [...anomaliesData];
+    
+    // Aplicar filtro por tipo
+    if (filterType === 'failed') {
+        filteredData = filteredData.filter(item => !item.was_successful);
+    } else if (filterType === 'external') {
+        filteredData = filteredData.filter(item => !isPrivateIP(item.ip_address));
+    }
+    
+    // Aplicar búsqueda
+    if (searchTerm) {
+        filteredData = filteredData.filter(item => 
+            item.usuario.toLowerCase().includes(searchTerm) ||
+            item.ip_address.toLowerCase().includes(searchTerm) ||
+            item.table_accessed.toLowerCase().includes(searchTerm)
         );
-    });
+    }
+    
+    displayTableData(filteredData);
 }
 
-
-function quickReserve(classroomId) {
+// Verificar si una IP es privada
+function isPrivateIP(ip) {
+    // IPv4
+    if (ip.startsWith('192.168.')) return true;
+    if (ip.startsWith('10.')) return true;
+    if (ip.match(/^172\.(1[6-9]|2[0-9]|3[0-1])\./)) return true;
+    if (ip === '127.0.0.1') return true;
     
-    navigateToSection('reservar');
+    // IPv6
+    if (ip.startsWith('fc00:') || ip.startsWith('fd00:')) return true;
+    if (ip === '::1') return true;
     
-    
-    const select = document.getElementById('classroom');
-    select.value = classroomId;
-    
-    
-    setTimeout(() => {
-        select.focus();
-    }, 300);
+    return false;
 }
 
-
-function renderReservations() {
-    const container = document.getElementById('reservations-list');
+// Mostrar datos en la tabla
+function displayTableData(data) {
+    const tableBody = document.getElementById('tableBody');
     
-    
-    container.innerHTML = '';
-    
-    
-    if (appState.reservations.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-calendar-times"></i>
-                <p>No tienes reservas activas</p>
-            </div>
+    if (data.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="7" style="text-align: center;">
+                    <i class="fas fa-info-circle"></i> No hay alertas para mostrar
+                </td>
+            </tr>
         `;
         return;
     }
     
-    
-    appState.reservations.forEach(reservation => {
-        const reservationDiv = document.createElement('div');
-        reservationDiv.className = 'reservation-item';
+    tableBody.innerHTML = data.map(item => {
+        const isFailed = !item.was_successful;
+        const isExternal = !isPrivateIP(item.ip_address);
         
-        reservationDiv.innerHTML = `
-            <div class="reservation-info">
-                <h4>${reservation.classroom}</h4>
-                <p><i class="fas fa-calendar"></i> Fecha: ${formatDate(reservation.date)}</p>
-                <p><i class="fas fa-clock"></i> Hora: ${reservation.time}</p>
-                <p><i class="fas fa-info-circle"></i> Propósito: ${reservation.purpose}</p>
-            </div>
-            <div class="reservation-actions">
-                <button class="cancel-button" onclick="cancelReservation(${reservation.id})">
-                    <i class="fas fa-times"></i> Cancelar
-                </button>
-            </div>
+        // Determinar tipo de alerta
+        let alertType = '';
+        let alertClass = '';
+        if (isFailed && isExternal) {
+            alertType = 'Fallo + IP Externa';
+            alertClass = 'alert-both';
+        } else if (isFailed) {
+            alertType = 'Acceso Fallido';
+            alertClass = 'alert-failed';
+        } else if (isExternal) {
+            alertType = 'IP Externa';
+            alertClass = 'alert-external';
+        }
+        
+        // Formatear fecha
+        const date = new Date(item.access_timestamp);
+        const formattedDate = date.toLocaleString('es-ES', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+        
+        return `
+            <tr>
+                <td><i class="fas fa-user"></i> ${item.usuario}</td>
+                <td><i class="fas fa-network-wired"></i> ${item.ip_address}</td>
+                <td><i class="far fa-calendar-alt"></i> ${formattedDate}</td>
+                <td><i class="fas fa-table"></i> ${item.table_accessed}</td>
+                <td><span class="badge">${item.operation_type}</span></td>
+                <td>
+                    <span class="status-badge ${item.was_successful ? 'status-success' : 'status-failed'}">
+                        ${item.was_successful ? '✓ Éxito' : '✗ Fallo'}
+                    </span>
+                </td>
+                <td>
+                    <span class="alert-type ${alertClass}">
+                        ${alertType}
+                    </span>
+                </td>
+            </tr>
         `;
-        
-        container.appendChild(reservationDiv);
-    });
+    }).join('');
 }
 
-
-function cancelReservation(reservationId) {
+// Actualizar KPIs
+function updateKPIs() {
+    const alertCount = anomaliesData.length;
+    const failedCount = anomaliesData.filter(item => !item.was_successful).length;
+    const externalIPCount = anomaliesData.filter(item => !isPrivateIP(item.ip_address)).length;
     
-    if (!confirm('¿Está seguro de que desea cancelar esta reserva?')) {
-        return;
+    document.getElementById('alertCount').textContent = alertCount;
+    document.getElementById('failedCount').textContent = failedCount;
+    document.getElementById('externalIPCount').textContent = externalIPCount;
+    document.getElementById('totalAccess').textContent = anomaliesData.length;
+}
+
+// Actualizar gráfico
+function updateChart() {
+    const ctx = document.getElementById('activityChart').getContext('2d');
+    
+    // Preparar datos para el gráfico (últimas 24 horas por hora)
+    const last24h = Array(24).fill(0);
+    const failedByHour = Array(24).fill(0);
+    
+    anomaliesData.forEach(item => {
+        const hour = new Date(item.access_timestamp).getHours();
+        last24h[hour]++;
+        if (!item.was_successful) {
+            failedByHour[hour]++;
+        }
+    });
+    
+    const hours = Array.from({ length: 24 }, (_, i) => `${i}:00`);
+    
+    if (activityChart) {
+        activityChart.destroy();
     }
     
-    
-    const reservationIndex = appState.reservations.findIndex(r => r.id === reservationId);
-    
-    if (reservationIndex !== -1) {
-        const reservation = appState.reservations[reservationIndex];
-        
-        
-        const classroom = appState.classrooms.find(c => c.id === reservation.classroomId);
-        if (classroom) {
-            classroom.status = 'disponible';
-        }
-        
-        
-        appState.reservations.splice(reservationIndex, 1);
-        
-        
-        renderReservations();
-        renderClassroomsTable();
-        populateClassroomSelect();
-        updateStats();
-        
-        
-        showModal('Reserva Cancelada', 'La reserva ha sido cancelada exitosamente');
-    }
-}
-
-
-function setupAddClassroomForm() {
-    const form = document.getElementById('add-classroom-form');
-    
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        
-        const name = document.getElementById('new-classroom-name').value;
-        const capacity = parseInt(document.getElementById('new-classroom-capacity').value);
-        const resources = document.getElementById('new-classroom-resources').value;
-        
-        
-        if (!name || !capacity || !resources) {
-            showModal('Error', 'Por favor complete todos los campos', 'error');
-            return;
-        }
-        
-        
-        const newId = Math.max(...appState.classrooms.map(c => c.id)) + 1;
-        
-        
-        const newClassroom = {
-            id: newId,
-            name: name,
-            capacity: capacity,
-            resources: resources,
-            status: 'disponible'
-        };
-        
-        
-        appState.classrooms.push(newClassroom);
-        
-        
-        renderClassroomsTable();
-        populateClassroomSelect();
-        updateStats();
-        
-        
-        form.reset();
-        
-        
-        showModal('Aula Agregada', `${name} ha sido agregada exitosamente al sistema`);
-    });
-}
-
-
-function updateStats() {
-    
-    const totalClassrooms = appState.classrooms.length;
-    document.getElementById('stat-total-classrooms').textContent = totalClassrooms;
-    
-    
-    const availableClassrooms = appState.classrooms.filter(c => c.status === 'disponible').length;
-    document.getElementById('stat-available-classrooms').textContent = availableClassrooms;
-    
-    
-    const activeReservations = appState.reservations.length;
-    document.getElementById('stat-active-reservations').textContent = activeReservations;
-}
-
-
-function setupModal() {
-    
-    closeModalBtn.addEventListener('click', closeModal);
-    
-    
-    modalCloseBtn.addEventListener('click', closeModal);
-    
-    
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            closeModal();
+    activityChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: hours,
+            datasets: [
+                {
+                    label: 'Total Alertas',
+                    data: last24h,
+                    borderColor: 'rgb(52, 152, 219)',
+                    backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: 'Accesos Fallidos',
+                    data: failedByHour,
+                    borderColor: 'rgb(231, 76, 60)',
+                    backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Alertas por Hora'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
         }
     });
 }
 
-function showModal(title, message, type = 'success') {
-    modalTitle.textContent = title;
-    modalMessage.textContent = message;
+// Función para simular datos de prueba (útil para desarrollo)
+function loadMockData() {
+    const mockData = [
+        {
+            usuario: "admin",
+            ip_address: "192.168.1.100",
+            access_timestamp: new Date().toISOString(),
+            table_accessed: "users",
+            operation_type: "SELECT",
+            was_successful: true
+        },
+        {
+            usuario: "invitado",
+            ip_address: "45.33.22.11",
+            access_timestamp: new Date(Date.now() - 3600000).toISOString(),
+            table_accessed: "products",
+            operation_type: "SELECT",
+            was_successful: true
+        },
+        {
+            usuario: "hacker",
+            ip_address: "203.0.113.5",
+            access_timestamp: new Date(Date.now() - 7200000).toISOString(),
+            table_accessed: "credit_cards",
+            operation_type: "SELECT",
+            was_successful: false
+        },
+        {
+            usuario: "admin",
+            ip_address: "10.0.0.50",
+            access_timestamp: new Date(Date.now() - 10800000).toISOString(),
+            table_accessed: "users",
+            operation_type: "UPDATE",
+            was_successful: true
+        },
+        {
+            usuario: "externo",
+            ip_address: "8.8.8.8",
+            access_timestamp: new Date(Date.now() - 14400000).toISOString(),
+            table_accessed: "passwords",
+            operation_type: "SELECT",
+            was_successful: true
+        }
+    ];
     
-    
-    const modalIcon = document.querySelector('.modal-icon i');
-    if (type === 'error') {
-        modalIcon.className = 'fas fa-exclamation-circle';
-        modalIcon.style.color = 'var(--accent-color)';
-    } else {
-        modalIcon.className = 'fas fa-check-circle';
-        modalIcon.style.color = 'var(--success-color)';
-    }
-    
-    
-    modal.classList.add('show');
+    anomaliesData = mockData;
+    filterAndDisplayData();
+    updateKPIs();
+    updateChart();
 }
 
-function closeModal() {
-    
-    modal.classList.remove('show');
-}
-
-
-function formatDate(dateString) {
-    const date = new Date(dateString + 'T00:00:00');
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return date.toLocaleDateString('es-ES', options);
-}
+// Descomenta la siguiente línea para usar datos de prueba sin backend
+loadMockData();

@@ -1,284 +1,528 @@
-<!--JAVIER MENDOZA-->
-<!--DENNIS CARRETO-->
-<!--ANDERSON HERNANDEZ-->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestión de Aulas - Universidad</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
+    <title>Arquitectura IoT - Fábrica de Alimentos Quetzaltenango</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 1300px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 20px;
+        }
+        
+        /* Arquitectura en capas */
+        .layers {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+        }
+        
+        /* Flechas conectoras */
+        .layers::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 80px;
+            bottom: 80px;
+            width: 4px;
+            background: linear-gradient(180deg, #4CAF50, #2196F3, #9C27B0, #FF5722);
+            transform: translateX(-50%);
+            z-index: 1;
+            border-radius: 4px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+        
+        .layer {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .layer-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            width: fit-content;
+            border: 2px solid;
+        }
+        
+        .layer-icon {
+            font-size: 2em;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+        }
+        
+        .layer-title {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        
+        .layer-subtitle {
+            color: #666;
+            font-size: 0.9em;
+            margin-left: auto;
+        }
+        
+        /* Capa Física */
+        .physical .layer-header { border-color: #4CAF50; }
+        .physical .layer-icon { background: #4CAF50; color: white; }
+        
+        /* Capa Comunicación */
+        .communication .layer-header { border-color: #2196F3; }
+        .communication .layer-icon { background: #2196F3; color: white; }
+        
+        /* Capa Procesamiento */
+        .processing .layer-header { border-color: #9C27B0; }
+        .processing .layer-icon { background: #9C27B0; color: white; }
+        
+        /* Capa Aplicación */
+        .application .layer-header { border-color: #FF5722; }
+        .application .layer-icon { background: #FF5722; color: white; }
+        
+        /* Grid de elementos */
+        .layer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-left: 80px;
+            position: relative;
+        }
+        
+        /* Elemento individual */
+        .element {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-left: 5px solid;
+            position: relative;
+        }
+        
+        .element:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+        
+        .physical .element { border-left-color: #4CAF50; }
+        .communication .element { border-left-color: #2196F3; }
+        .processing .element { border-left-color: #9C27B0; }
+        .application .element { border-left-color: #FF5722; }
+        
+        .element-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .element-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .element-desc {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        
+        .element-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            font-size: 0.8em;
+            color: #555;
+        }
+        
+        /* Flechas de conexión */
+        .connection-arrow {
+            position: absolute;
+            left: -40px;
+            top: 50%;
+            font-size: 1.5em;
+            color: #999;
+            transform: translateY(-50%);
+        }
+        
+        /* Fábrica ilustración */
+        .factory-illustration {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 30px;
+            border-radius: 20px;
+        }
+        
+        .factory-area {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            min-width: 150px;
+        }
+        
+        .factory-area h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .sensor-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .sensor {
+            background: #4CAF50;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 30px;
+            font-size: 0.9em;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .layer-grid {
+                margin-left: 20px;
+            }
+            .layers::before {
+                left: 30px;
+            }
+            .connection-arrow {
+                display: none;
+            }
+        }
+        
+        /* Beneficios */
+        .benefits {
+            margin-top: 50px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            padding: 30px;
+            border-radius: 20px;
+            color: white;
+        }
+        
+        .benefits h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .benefit-item {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .benefit-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .benefit-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .benefit-desc {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        /* Mapa de Guatemala */
+        .location-badge {
+            display: inline-block;
+            background: #ff6b6b;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 30px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(255,107,107,0.3);
+        }
+        
+        .location-badge i {
+            margin-right: 5px;
+        }
+    </style>
 </head>
 <body>
-    <header class="header">
-        <div class="header-info">
-            <div class="system-name">Sistema de Gestión de Aulas</div>
-            <div class="university-name">Universidad Tecnológica Nacional</div>
+    <div class="container">
+        <h1>🏭 Sistema IoT 4.0</h1>
+        <div class="subtitle">
+            <span class="location-badge">📍 Quetzaltenango, Guatemala</span>
+            <br>
+            Fábrica de Lácteos "Los Altos" - Monitoreo Inteligente de Cadena de Frío
         </div>
         
-        <div class="user-info">
-            <div class="user-icon">
-                <i class="fas fa-user-circle"></i>
+        <!-- Ilustración de la fábrica -->
+        <div class="factory-illustration">
+            <div class="factory-area">
+                <h3>🧀 Cámara Quesos</h3>
+                <div class="sensor-group">
+                    <span class="sensor">🌡️ 4°C</span>
+                    <span class="sensor">💧 85%</span>
+                    <span class="sensor">🚪 Cerrada</span>
+                </div>
             </div>
-            <div class="user-details">
-                <div class="user-name">Dra. María Rodríguez</div>
-                <div class="user-role">Profesora - Departamento de Ingeniería</div>
+            <div class="factory-area">
+                <h3>🥛 Cámara Yogurt</h3>
+                <div class="sensor-group">
+                    <span class="sensor">🌡️ 2°C</span>
+                    <span class="sensor">💧 90%</span>
+                    <span class="sensor">🔵 Normal</span>
+                </div>
+            </div>
+            <div class="factory-area">
+                <h3>📦 Área Empaque</h3>
+                <div class="sensor-group">
+                    <span class="sensor">🌡️ 18°C</span>
+                    <span class="sensor">💧 45%</span>
+                    <span class="sensor">⚙️ Activo</span>
+                </div>
             </div>
         </div>
-    </header>
-    
-    <nav class="navbar">
-        <ul class="nav-list">
-            <li class="nav-item active" data-section="inicio">
-                <a href="#"><i class="fas fa-home"></i> Inicio</a>
-            </li>
-            <li class="nav-item" data-section="aulas">
-                <a href="#"><i class="fas fa-chalkboard"></i> Aulas</a>
-            </li>
-            <li class="nav-item" data-section="reservar">
-                <a href="#"><i class="fas fa-calendar-plus"></i> Reservar Aula</a>
-            </li>
-            <li class="nav-item" data-section="mis-reservas">
-                <a href="#"><i class="fas fa-list-alt"></i> Mis Reservas</a>
-            </li>
-            <li class="nav-item" data-section="administracion">
-                <a href="#"><i class="fas fa-cog"></i> Administración</a>
-            </li>
-        </ul>
-    </nav>
-    
-    <main class="main-content">
-        <!-- SECCIÓN: INICIO -->
-        <section id="inicio-section" class="content-section active">
-            <h1 class="page-title">Panel de Control</h1>
-            
-            <div class="welcome-section">
-                <h2>Bienvenida al Sistema de Gestión de Aulas</h2>
-                <p>Este sistema permite a los profesores y personal administrativo gestionar las reservas de aulas de la universidad de manera eficiente. Desde aquí puedes consultar la disponibilidad de aulas, realizar nuevas reservas, gestionar tus reservas existentes y acceder a funciones administrativas si tienes los permisos correspondientes.</p>
-            </div>
-            
-            <div class="features">
-                <div class="feature-card" data-navigate="aulas">
-                    <div class="feature-icon">
-                        <i class="fas fa-chalkboard"></i>
+        
+        <!-- Arquitectura por capas -->
+        <div class="layers">
+            <!-- Capa Física -->
+            <div class="layer physical">
+                <div class="layer-header">
+                    <span class="layer-icon">🔌</span>
+                    <span class="layer-title">CAPA FÍSICA</span>
+                    <span class="layer-subtitle">Dispositivos en planta</span>
+                </div>
+                <div class="layer-grid">
+                    <div class="element">
+                        <span class="connection-arrow">⬇️</span>
+                        <div class="element-icon">🌡️</div>
+                        <div class="element-title">Sensores de Temperatura</div>
+                        <div class="element-desc">Monitoreo continuo en cámaras de refrigeración</div>
+                        <span class="element-tag">Precisión ±0.5°C</span>
                     </div>
-                    <h3>Aulas Disponibles</h3>
-                    <p>Consulta la lista completa de aulas y su disponibilidad</p>
-                    <button class="card-button">Ver Aulas</button>
-                </div>
-                
-                <div class="feature-card" data-navigate="reservar">
-                    <div class="feature-icon">
-                        <i class="fas fa-calendar-plus"></i>
+                    <div class="element">
+                        <span class="connection-arrow">⬇️</span>
+                        <div class="element-icon">💧</div>
+                        <div class="element-title">Sensores de Humedad</div>
+                        <div class="element-desc">Control de ambiente en áreas de proceso</div>
+                        <span class="element-tag">Rango 0-100%</span>
                     </div>
-                    <h3>Reservar Aula</h3>
-                    <p>Realiza nuevas reservas de aulas</p>
-                    <button class="card-button">Hacer Reserva</button>
-                </div>
-                
-                <div class="feature-card" data-navigate="mis-reservas">
-                    <div class="feature-icon">
-                        <i class="fas fa-list-alt"></i>
+                    <div class="element">
+                        <span class="connection-arrow">⬇️</span>
+                        <div class="element-icon">🚪</div>
+                        <div class="element-title">Sensores de Puerta</div>
+                        <div class="element-desc">Detección de apertura en cámaras frías</div>
+                        <span class="element-tag">Contacto magnético</span>
                     </div>
-                    <h3>Mis Reservas</h3>
-                    <p>Gestiona tus reservas activas</p>
-                    <button class="card-button">Ver Reservas</button>
-                </div>
-                
-                <div class="feature-card" data-navigate="administracion">
-                    <div class="feature-icon">
-                        <i class="fas fa-cog"></i>
+                    <div class="element">
+                        <span class="connection-arrow">⬇️</span>
+                        <div class="element-icon">⚙️</div>
+                        <div class="element-title">Actuadores</div>
+                        <div class="element-desc">Control automático de compresores</div>
+                        <span class="element-tag">24V DC</span>
                     </div>
-                    <h3>Administración</h3>
-                    <p>Gestiona usuarios y configuraciones</p>
-                    <button class="card-button">Administrar</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECCIÓN: AULAS -->
-        <section id="aulas-section" class="content-section">
-            <h1 class="page-title">Aulas Disponibles</h1>
-            
-            <div class="filters-section">
-                <div class="filter-group">
-                    <label for="filter-capacity">Capacidad mínima:</label>
-                    <select id="filter-capacity">
-                        <option value="0">Todas</option>
-                        <option value="20">20+ personas</option>
-                        <option value="30">30+ personas</option>
-                        <option value="40">40+ personas</option>
-                        <option value="50">50+ personas</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label for="filter-status">Estado:</label>
-                    <select id="filter-status">
-                        <option value="all">Todas</option>
-                        <option value="disponible">Disponibles</option>
-                        <option value="ocupada">Ocupadas</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <input type="text" id="search-classroom" placeholder="Buscar aula...">
                 </div>
             </div>
             
-            <div class="feature-card">
-                <table id="classrooms-table">
-                    <thead>
-                        <tr>
-                            <th>Aula</th>
-                            <th>Capacidad</th>
-                            <th>Recursos</th>
-                            <th>Disponibilidad</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="classrooms-tbody">
-                        
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- SECCIÓN: RESERVAR -->
-        <section id="reservar-section" class="content-section">
-            <h1 class="page-title">Reservar Aula</h1>
-            
-            <div class="feature-card">
-                <form id="reservation-form" class="reservation-form">
-                    <div class="form-group">
-                        <label for="classroom">Selección de aula:</label>
-                        <select id="classroom" name="classroom" required>
-                            <option value="">Seleccione un aula</option>
-                            
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="date">Fecha:</label>
-                        <input type="date" id="date" name="date" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="time">Hora:</label>
-                        <select id="time" name="time" required>
-                            <option value="">Seleccione una hora</option>
-                            <option value="08:00">08:00 - 09:30</option>
-                            <option value="09:45">09:45 - 11:15</option>
-                            <option value="11:30">11:30 - 13:00</option>
-                            <option value="14:00">14:00 - 15:30</option>
-                            <option value="15:45">15:45 - 17:15</option>
-                            <option value="17:30">17:30 - 19:00</option>
-                            <option value="19:15">19:15 - 20:45</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="purpose">Propósito de la reserva:</label>
-                        <input type="text" id="purpose" name="purpose" placeholder="Ej: Clase de Matemáticas" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <button type="submit">Reservar Aula</button>
-                    </div>
-                </form>
-            </div>
-        </section>
-
-        <!-- SECCIÓN: MIS RESERVAS -->
-        <section id="mis-reservas-section" class="content-section">
-            <h1 class="page-title">Mis Reservas</h1>
-            
-            <div class="feature-card">
-                <div id="reservations-list">
-                    
+            <!-- Capa Comunicación -->
+            <div class="layer communication">
+                <div class="layer-header">
+                    <span class="layer-icon">📶</span>
+                    <span class="layer-title">CAPA DE COMUNICACIÓN</span>
+                    <span class="layer-subtitle">Redes y gateways</span>
                 </div>
-            </div>
-        </section>
-
-        <!-- SECCIÓN: ADMINISTRACIÓN -->
-        <section id="administracion-section" class="content-section">
-            <h1 class="page-title">Panel de Administración</h1>
-            
-            <div class="admin-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-plus-circle"></i>
+                <div class="layer-grid">
+                    <div class="element">
+                        <span class="connection-arrow">⬇️</span>
+                        <div class="element-icon">📡</div>
+                        <div class="element-title">Gateway IoT Principal</div>
+                        <div class="element-desc">Centro de comunicaciones con edge computing</div>
+                        <span class="element-tag">Procesamiento local</span>
                     </div>
-                    <h3>Agregar Nueva Aula</h3>
-                    
-                    <form id="add-classroom-form" class="reservation-form">
-                        <div class="form-group">
-                            <label for="new-classroom-name">Nombre del aula:</label>
-                            <input type="text" id="new-classroom-name" placeholder="Ej: Aula 606" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="new-classroom-capacity">Capacidad:</label>
-                            <input type="number" id="new-classroom-capacity" min="1" placeholder="30" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="new-classroom-resources">Recursos (separados por coma):</label>
-                            <input type="text" id="new-classroom-resources" placeholder="Proyector, Pizarra" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <button type="submit">Agregar Aula</button>
-                        </div>
-                    </form>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-chart-bar"></i>
+                    <div class="element">
+                        <span class="connection-arrow">⬇️</span>
+                        <div class="element-icon">🔄</div>
+                        <div class="element-title">Protocolos MQTT/Modbus</div>
+                        <div class="element-desc">Comunicación estandarizada con sensores</div>
+                        <span class="element-tag">Industrial Grade</span>
                     </div>
-                    <h3>Estadísticas del Sistema</h3>
-                    
-                    <div class="stats-container">
-                        <div class="stat-item">
-                            <div class="stat-label">Total de Aulas</div>
-                            <div class="stat-value" id="stat-total-classrooms">0</div>
-                        </div>
-                        
-                        <div class="stat-item">
-                            <div class="stat-label">Aulas Disponibles</div>
-                            <div class="stat-value" id="stat-available-classrooms">0</div>
-                        </div>
-                        
-                        <div class="stat-item">
-                            <div class="stat-label">Reservas Activas</div>
-                            <div class="stat-value" id="stat-active-reservations">0</div>
-                        </div>
+                    <div class="element">
+                        <span class="connection-arrow">⬇️</span>
+                        <div class="element-icon">📱</div>
+                        <div class="element-title">Red 4G/5G Respaldo</div>
+                        <div class="element-desc">Conexión redundante a internet</div>
+                        <span class="element-tag">Failover automático</span>
                     </div>
                 </div>
             </div>
-        </section>
-    </main>
-    
-    <!-- Modal de confirmación -->
-    <div id="confirmation-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <div class="modal-icon">
-                <i class="fas fa-check-circle"></i>
+            
+            <!-- Capa Procesamiento -->
+            <div class="layer processing">
+                <div class="layer-header">
+                    <span class="layer-icon">🧠</span>
+                    <span class="layer-title">CAPA DE PROCESAMIENTO</span>
+                    <span class="layer-subtitle">Análisis en la nube</span>
+                </div>
+                <div class="layer-grid">
+                    <div class="element">
+                        <span class="connection-arrow">⬇️</span>
+                        <div class="element-icon">☁️</div>
+                        <div class="element-title">Plataforma Cloud</div>
+                        <div class="element-desc">Almacenamiento y procesamiento central</div>
+                        <span class="element-tag">AWS/Azure</span>
+                    </div>
+                    <div class="element">
+                        <span class="connection-arrow">⬇️</span>
+                        <div class="element-icon">📊</div>
+                        <div class="element-title">Big Data Analytics</div>
+                        <div class="element-desc">Análisis histórico y tendencias</div>
+                        <span class="element-tag">Machine Learning</span>
+                    </div>
+                    <div class="element">
+                        <span class="connection-arrow">⬇️</span>
+                        <div class="element-icon">🤖</div>
+                        <div class="element-title">IA Predictiva</div>
+                        <div class="element-desc">Predicción de fallas en equipos</div>
+                        <span class="element-tag">Modelos entrenados</span>
+                    </div>
+                </div>
             </div>
-            <h2 id="modal-title">Operación Exitosa</h2>
-            <p id="modal-message">La operación se ha completado correctamente.</p>
-            <button id="modal-close-btn" class="modal-button">Aceptar</button>
+            
+            <!-- Capa Aplicación -->
+            <div class="layer application">
+                <div class="layer-header">
+                    <span class="layer-icon">📱</span>
+                    <span class="layer-title">CAPA DE APLICACIÓN</span>
+                    <span class="layer-subtitle">Interacción con usuarios</span>
+                </div>
+                <div class="layer-grid">
+                    <div class="element">
+                        <div class="element-icon">📊</div>
+                        <div class="element-title">Dashboard Tiempo Real</div>
+                        <div class="element-desc">Visualización de KPIs en planta</div>
+                        <span class="element-tag">Web + Móvil</span>
+                    </div>
+                    <div class="element">
+                        <div class="element-icon">⚠️</div>
+                        <div class="element-title">Sistema de Alertas</div>
+                        <div class="element-desc">Notificaciones SMS/App por desviaciones</div>
+                        <span class="element-tag">Tiempo real</span>
+                    </div>
+                    <div class="element">
+                        <div class="element-icon">📋</div>
+                        <div class="element-title">Reportes HACCP</div>
+                        <div class="element-desc">Documentación automática para auditorías</div>
+                        <span class="element-tag">Cumplimiento</span>
+                    </div>
+                    <div class="element">
+                        <div class="element-icon">🎛️</div>
+                        <div class="element-title">Control Automático</div>
+                        <div class="element-desc">Regulación autónoma de temperatura</div>
+                        <span class="element-tag">PID Control</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Beneficios -->
+        <div class="benefits">
+            <h2>✨ Beneficios del Sistema ✨</h2>
+            <div class="benefits-grid">
+                <div class="benefit-item">
+                    <div class="benefit-icon">💰</div>
+                    <div class="benefit-title">-30% Pérdidas</div>
+                    <div class="benefit-desc">Reducción de producto dañado por fallas en cadena de frío</div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">⚡</div>
+                    <div class="benefit-title">-20% Energía</div>
+                    <div class="benefit-desc">Optimización de ciclos de refrigeración</div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">📋</div>
+                    <div class="benefit-title">100% Trazabilidad</div>
+                    <div class="benefit-desc">Registros automáticos para auditorías HACCP</div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">🔧</div>
+                    <div class="benefit-title">Predictivo</div>
+                    <div class="benefit-desc">Mantenimiento anticipado de equipos</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pie de página -->
+        <div style="text-align: center; margin-top: 30px; color: #666;">
+            <p>🏭 Fábrica de Alimentos - Quetzaltenango, Guatemala | Sistema IoT 4.0 para Cadena de Frío</p>
+            <p style="font-size: 0.9em;">Datos en tiempo real · Alertas inmediatas · Cumplimiento HACCP · Trazabilidad total</p>
         </div>
     </div>
-    
-    <footer class="footer">
-        <p>Sistema de Gestión de Aulas &copy; 2023 - Universidad Tecnológica Nacional</p>
-        <p>Todos los derechos reservados</p>
-    </footer>
-
-    <script src="script.js"></script>
 </body>
 </html>
