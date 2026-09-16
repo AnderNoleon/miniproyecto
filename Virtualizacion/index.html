@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enviar mensaje</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f4f5f7;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+  .card {
+    background: #ffffff;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 420px;
+  }
+  h1 {
+    margin: 0 0 1.5rem;
+    font-size: 1.4rem;
+    color: #1f2933;
+    text-align: center;
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  input[type="text"] {
+    padding: 0.75rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+  input[type="text"]:focus {
+    outline: none;
+    border-color: #2563eb;
+  }
+  button {
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  button:hover { background: #1d4ed8; }
+  button:disabled { background: #93b4f0; cursor: not-allowed; }
+  #status {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    min-height: 1.2rem;
+  }
+  #status.ok { color: #16a34a; }
+  #status.error { color: #dc2626; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Deja tu mensaje</h1>
+    <form id="messageForm">
+      <input type="text" id="mensaje" name="mensaje" placeholder="Escribe tu mensaje..." required maxlength="500">
+      <button type="submit">Enviar</button>
+    </form>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    const form = document.getElementById('messageForm');
+    const input = document.getElementById('mensaje');
+    const status = document.getElementById('status');
+    const button = form.querySelector('button');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const mensaje = input.value.trim();
+      if (!mensaje) return;
+
+      button.disabled = true;
+      status.className = '';
+      status.textContent = 'Enviando...';
+
+      try {
+        const response = await fetch('/api/mensajes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mensaje })
+        });
+
+        if (!response.ok) {
+          throw new Error('El servidor respondió con un error');
+        }
+
+        status.className = 'ok';
+        status.textContent = 'Mensaje guardado correctamente.';
+        form.reset();
+      } catch (err) {
+        status.className = 'error';
+        status.textContent = 'No se pudo guardar el mensaje. Intenta de nuevo.';
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
